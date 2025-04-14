@@ -31,3 +31,38 @@ function formatDateTime($datetime) {
 function sanitizeInput($input) {
     return htmlspecialchars(trim($input));
 }
+
+function getPageTitle($page) {
+    $titles = [
+        'dashboard' => 'Dashboard',
+        'hospitals' => 'Manage Hospitals',
+        'doctors' => 'Manage Doctors',
+        'patients' => 'Patients',
+        'appointments' => 'Appointments',
+        'reports' => 'Reports',
+        'feed' => 'Hospital Feed',
+        'chat' => 'Messages',
+        'chatbot' => 'AI Assistant'
+    ];
+    return $titles[$page] ?? 'Page';
+}
+
+function getStatusBadge($status) {
+    $classes = [
+        'active' => 'badge-success',
+        'pending' => 'badge-warning',
+        'cancelled' => 'badge-danger'
+    ];
+    return '<span class="badge ' . ($classes[$status] ?? '') . '">' . ucfirst($status) . '</span>';
+}
+
+function getUserById($pdo, $userId) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    return $stmt->fetch();
+}
+
+function isAjaxRequest() {
+    return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+}

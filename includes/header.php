@@ -38,6 +38,40 @@ $role = $_SESSION['role'];
         </div>
     </nav>
 
+    <!-- Role-specific navigation menu -->
+    <div class="bg-white shadow-sm">
+        <div class="container mx-auto">
+            <div class="flex space-x-6 p-4">
+                <?php if ($role === 'admin'): ?>
+                    <a href="/medi-care-hub/admin/dashboard.php" class="nav-link">Dashboard</a>
+                    <a href="/medi-care-hub/admin/hospitals.php" class="nav-link">Hospitals</a>
+                    <a href="/medi-care-hub/admin/doctors.php" class="nav-link">Doctors</a>
+                    <a href="/medi-care-hub/admin/patients.php" class="nav-link">Patients</a>
+                    <a href="/medi-care-hub/admin/reports.php" class="nav-link">Reports</a>
+                <?php elseif ($role === 'hospital'): ?>
+                    <a href="/medi-care-hub/hospital/dashboard.php" class="nav-link">Dashboard</a>
+                    <a href="/medi-care-hub/hospital/doctors.php" class="nav-link">Doctors</a>
+                    <a href="/medi-care-hub/hospital/appointments.php" class="nav-link">Appointments</a>
+                    <a href="/medi-care-hub/hospital/feed.php" class="nav-link">Feed</a>
+                    <a href="/medi-care-hub/hospital/chat.php" class="nav-link">Messages</a>
+                <?php elseif ($role === 'doctor'): ?>
+                    <a href="/medi-care-hub/doctor/dashboard.php" class="nav-link">Dashboard</a>
+                    <a href="/medi-care-hub/doctor/appointments.php" class="nav-link">Appointments</a>
+                    <a href="/medi-care-hub/doctor/patients.php" class="nav-link">Patients</a>
+                    <a href="/medi-care-hub/doctor/reports.php" class="nav-link">Reports</a>
+                    <a href="/medi-care-hub/doctor/chat.php" class="nav-link">Messages</a>
+                <?php elseif ($role === 'patient'): ?>
+                    <a href="/medi-care-hub/patient/dashboard.php" class="nav-link">Dashboard</a>
+                    <a href="/medi-care-hub/patient/appointments.php" class="nav-link">Appointments</a>
+                    <a href="/medi-care-hub/patient/reports.php" class="nav-link">Reports</a>
+                    <a href="/medi-care-hub/patient/feed.php" class="nav-link">Feed</a>
+                    <a href="/medi-care-hub/patient/chat.php" class="nav-link">Messages</a>
+                    <a href="/medi-care-hub/patient/chatbot.php" class="nav-link">AI Assistant</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Add notification handling script -->
     <script>
     $(document).ready(function() {

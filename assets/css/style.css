@@ -41,3 +41,43 @@
 .table td {
     @apply px-6 py-4 whitespace-nowrap;
 }
+
+.nav-link {
+    @apply text-gray-600 hover:text-blue-600 font-medium transition-colors;
+}
+
+.page-title {
+    @apply text-2xl font-bold mb-6 text-gray-800;
+}
+
+.card {
+    @apply bg-white rounded-lg shadow-md p-6;
+}
+
+.form-group {
+    @apply mb-4;
+}
+
+.form-label {
+    @apply block text-gray-700 text-sm font-bold mb-2;
+}
+
+.badge {
+    @apply px-2 py-1 rounded text-sm font-medium;
+}
+
+.badge-success {
+    @apply bg-green-100 text-green-800;
+}
+
+.badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+.badge-danger {
+    @apply bg-red-100 text-red-800;
+}
+
+.grid-list {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
