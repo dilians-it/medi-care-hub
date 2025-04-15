@@ -22,13 +22,22 @@ $stmt = $pdo->prepare("
 $stmt->execute([$patientId]);
 $appointments = $stmt->fetchAll();
 
-// Get available doctors - Removed status check
-$stmt = $pdo->prepare("
-    SELECT d.id, d.first_name, d.last_name, d.specialization 
+// Get available doctors grouped by hospital
+$stmt = $pdo->query("
+    SELECT d.id, d.first_name, d.last_name, d.specialization, h.name as hospital_name 
     FROM doctors d
+    JOIN hospitals h ON d.hospital_id = h.id
+    JOIN users u ON d.user_id = u.id
+    WHERE u.status = 'active'
+    ORDER BY h.name, d.first_name
 ");
-$stmt->execute();
 $doctors = $stmt->fetchAll();
+
+// Group doctors by hospital
+$doctorsByHospital = [];
+foreach($doctors as $doctor) {
+    $doctorsByHospital[$doctor['hospital_name']][] = $doctor;
+}
 ?>
 
 <div class="container mx-auto px-4 py-8">
@@ -39,11 +48,16 @@ $doctors = $stmt->fetchAll();
                 <div class="form-group">
                     <label class="form-label">Select Doctor</label>
                     <select name="doctor_id" required class="form-input">
-                        <?php foreach ($doctors as $doctor): ?>
-                            <option value="<?= $doctor['id'] ?>">
-                                Dr. <?= htmlspecialchars($doctor['first_name'] . ' ' . $doctor['last_name']) ?> 
-                                (<?= htmlspecialchars($doctor['specialization']) ?>)
-                            </option>
+                        <option value="">Select a Doctor</option>
+                        <?php foreach ($doctorsByHospital as $hospital => $hospitalDoctors): ?>
+                            <optgroup label="<?= htmlspecialchars($hospital) ?>">
+                                <?php foreach ($hospitalDoctors as $doctor): ?>
+                                    <option value="<?= $doctor['id'] ?>">
+                                        Dr. <?= htmlspecialchars($doctor['first_name'] . ' ' . $doctor['last_name']) ?> 
+                                        (<?= htmlspecialchars($doctor['specialization']) ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </optgroup>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -50,6 +50,77 @@ $doctors = $stmt->fetchAll();
             </div>
         <?php endforeach; ?>
     </div>
+    
+    <!-- Add Doctor Modal -->
+    <div id="addDoctorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-bold mb-4">Add New Doctor</h3>
+                <form id="addDoctorForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">First Name</label>
+                        <input type="text" name="first_name" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                        <input type="text" name="last_name" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" name="email" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Specialization</label>
+                        <input type="text" name="specialization" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Experience (Years)</label>
+                        <input type="number" name="experience_years" required class="form-input">
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" onclick="closeAddDoctorModal()" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary">Add Doctor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Doctor Modal -->
+    <div id="editDoctorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-bold mb-4">Edit Doctor</h3>
+                <form id="editDoctorForm" class="space-y-4">
+                    <input type="hidden" name="doctor_id" id="edit_doctor_id">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">First Name</label>
+                        <input type="text" name="first_name" id="edit_first_name" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                        <input type="text" name="last_name" id="edit_last_name" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" name="email" id="edit_email" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Specialization</label>
+                        <input type="text" name="specialization" id="edit_specialization" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Experience (Years)</label>
+                        <input type="number" name="experience_years" id="edit_experience_years" required class="form-input">
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" onclick="closeEditDoctorModal()" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary">Update Doctor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="../assets/js/hospital-doctors.js"></script>

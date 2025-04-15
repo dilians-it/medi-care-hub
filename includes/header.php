@@ -22,7 +22,14 @@ $role = $_SESSION['role'];
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="/medi-care-hub" class="flex items-center space-x-3">
+                    <a href="<?php 
+                        if (isset($_SESSION['role'])) {
+                            echo $_SESSION['role'] === 'admin' ? '/medi-care-hub/admin/dashboard.php' : 
+                                '/medi-care-hub/' . $_SESSION['role'] . '/dashboard.php';
+                        } else {
+                            echo '/medi-care-hub/index.php';
+                        }
+                    ?>" class="flex items-center space-x-3">
                         <span class="material-icons text-blue-600 text-3xl">medical_services</span>
                         <span class="text-blue-600 text-xl font-bold tracking-tight">MediCare Hub</span>
                     </a>
