@@ -15,56 +15,85 @@ $userId = $_SESSION['user_id'];
 // Get available contacts based on role
 $query = match($role) {
     'patient' => "
-        SELECT u.id, d.first_name, d.last_name, d.specialization, 'doctor' as role 
-        FROM doctors d
-        JOIN users u ON d.user_id = u.id
-        WHERE u.status = 'active'
-        UNION
-        SELECT u.id, 'Help and Support' as first_name, '' as last_name, '' as specialization, 'admin' as role
+        SELECT u.id, 
+            CASE 
+                WHEN u.role = 'doctor' THEN CONCAT('Dr. ', d.first_name, ' ', d.last_name)
+                WHEN u.role = 'hospital' THEN h.name
+                WHEN u.role = 'admin' THEN 'Help & Support'
+            END as name,
+            u.role,
+            COALESCE(d.specialization, '') as specialization
         FROM users u
-        WHERE u.role = 'admin'
-        LIMIT 1
+        LEFT JOIN doctors d ON d.user_id = u.id
+        LEFT JOIN hospitals h ON h.user_id = u.id
+        WHERE u.status = 'active' 
+        AND u.role IN ('doctor', 'hospital', 'admin')
     ",
     'doctor' => "
-        SELECT u.id, p.first_name, p.last_name, '' as specialization, 'patient' as role
-        FROM patients p
-        JOIN users u ON p.user_id = u.id
-        JOIN appointments a ON p.id = a.patient_id
-        JOIN doctors d ON a.doctor_id = d.id
-        WHERE d.user_id = ?
-        GROUP BY u.id
+        SELECT u.id,
+            CASE 
+                WHEN u.role = 'patient' THEN CONCAT(p.first_name, ' ', p.last_name)
+                WHEN u.role = 'hospital' THEN h.name
+                WHEN u.role = 'admin' THEN 'Help & Support'
+            END as name,
+            u.role,
+            '' as specialization
+        FROM users u
+        LEFT JOIN patients p ON p.user_id = u.id
+        LEFT JOIN hospitals h ON h.user_id = u.id
+        WHERE u.status = 'active'
+        AND (
+            (u.role = 'patient' AND p.id IN (
+                SELECT patient_id FROM appointments WHERE doctor_id = (
+                    SELECT id FROM doctors WHERE user_id = ?
+                )
+            ))
+            OR u.role IN ('hospital', 'admin')
+        )
     ",
     'hospital' => "
-        SELECT u.id, d.first_name, d.last_name, d.specialization, 'doctor' as role
-        FROM doctors d
-        JOIN users u ON d.user_id = u.id
-        WHERE d.hospital_id = (SELECT id FROM hospitals WHERE user_id = ?)
-        UNION
-        SELECT u.id, 'Help and Support' as first_name, '' as last_name, '' as specialization, 'admin' as role
+        SELECT u.id,
+            CASE 
+                WHEN u.role = 'doctor' THEN CONCAT('Dr. ', d.first_name, ' ', d.last_name)
+                WHEN u.role = 'admin' THEN 'Help & Support'
+            END as name,
+            u.role,
+            COALESCE(d.specialization, '') as specialization
         FROM users u
-        WHERE u.role = 'admin'
-        LIMIT 1
+        LEFT JOIN doctors d ON d.user_id = u.id
+        WHERE u.status = 'active'
+        AND (
+            (u.role = 'doctor' AND d.hospital_id = (
+                SELECT id FROM hospitals WHERE user_id = ?
+            ))
+            OR u.role = 'admin'
+        )
     ",
     'admin' => "
-        SELECT u.id, 
-        CASE 
-            WHEN u.role = 'hospital' THEN h.name
-            WHEN u.role = 'doctor' THEN CONCAT(d.first_name, ' ', d.last_name)
-            WHEN u.role = 'patient' THEN CONCAT(p.first_name, ' ', p.last_name)
-        END as first_name,
-        '' as last_name,
-        COALESCE(d.specialization, '') as specialization,
-        u.role
+        SELECT u.id,
+            CASE 
+                WHEN u.role = 'patient' THEN CONCAT(p.first_name, ' ', p.last_name)
+                WHEN u.role = 'doctor' THEN CONCAT('Dr. ', d.first_name, ' ', d.last_name)
+                WHEN u.role = 'hospital' THEN h.name
+            END as name,
+            u.role,
+            COALESCE(d.specialization, '') as specialization,
+            (SELECT COUNT(*) FROM chat_messages WHERE 
+                ((sender_id = u.id AND receiver_id = ?) OR 
+                (sender_id = ? AND receiver_id = u.id)) AND 
+                created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as message_count
         FROM users u
-        LEFT JOIN hospitals h ON h.user_id = u.id
-        LEFT JOIN doctors d ON d.user_id = u.id
         LEFT JOIN patients p ON p.user_id = u.id
-        WHERE u.id != ? AND u.status = 'active'
+        LEFT JOIN doctors d ON d.user_id = u.id
+        LEFT JOIN hospitals h ON h.user_id = u.id
+        WHERE u.status = 'active'
+        AND u.role IN ('patient', 'doctor', 'hospital')
+        ORDER BY message_count DESC
     "
 };
 
 $stmt = $pdo->prepare($query);
-$stmt->execute($role === 'admin' || $role === 'doctor' || $role === 'hospital' ? [$userId] : []);
+$stmt->execute($role === 'admin' ? [$userId, $userId] : ($role === 'doctor' || $role === 'hospital' ? [$userId] : []));
 $contacts = $stmt->fetchAll();
 ?>
 
@@ -82,13 +111,11 @@ $contacts = $stmt->fetchAll();
                             <div class="contact-item p-4 border-b hover:bg-gray-100 cursor-pointer transition-colors" 
                                  data-user-id="<?= $contact['id'] ?>">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                                        <?= strtoupper(substr($contact['first_name'], 0, 1)) ?>
+                                    <div class="w-10 h-10 rounded-full <?= getRoleColor($contact['role']) ?> flex items-center justify-center text-white font-bold">
+                                        <?= strtoupper(substr($contact['name'], 0, 1)) ?>
                                     </div>
                                     <div>
-                                        <h4 class="font-semibold">
-                                            <?= htmlspecialchars($contact['first_name']) ?>
-                                        </h4>
+                                        <h4 class="font-semibold"><?= htmlspecialchars($contact['name']) ?></h4>
                                         <span class="text-sm text-gray-500">
                                             <?= ucfirst($contact['role']) ?>
                                             <?= $contact['specialization'] ? ' - ' . htmlspecialchars($contact['specialization']) : '' ?>

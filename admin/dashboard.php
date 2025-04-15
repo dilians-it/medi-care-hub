@@ -38,6 +38,16 @@ $patientCount = $stmt->fetch()['patient_count'];
             <a href="patients.php" class="btn-primary mt-4 inline-block">View Patients</a>
         </div>
     </div>
+    
+    <div class="mt-8">
+        <div class="dashboard-card">
+            <h3 class="text-xl font-bold mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="../chat.php" class="btn-primary text-center">Messages & Support</a>
+                <a href="reports.php" class="btn-secondary text-center">View Reports</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <?php require_once '../includes/footer.php'; ?>
