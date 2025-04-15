@@ -66,3 +66,13 @@ function isAjaxRequest() {
     return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
+
+function getRoleColor($role) {
+    return match($role) {
+        'patient' => 'bg-blue-500',
+        'doctor' => 'bg-green-500',
+        'hospital' => 'bg-yellow-500',
+        'admin' => 'bg-red-500',
+        default => 'bg-gray-500'
+    };
+}
