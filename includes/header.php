@@ -53,20 +53,19 @@ $role = $_SESSION['role'];
                     <a href="doctors.php" class="nav-link">Doctors</a>
                     <a href="appointments.php" class="nav-link">Appointments</a>
                     <a href="feed.php" class="nav-link">Feed</a>
-                    <a href="chat.php" class="nav-link">Messages</a>
+                    <a href="../chat.php" class="nav-link">Messages</a>
                 <?php elseif ($role === 'doctor'): ?>
                     <a href="dashboard.php" class="nav-link">Dashboard</a>
                     <a href="appointments.php" class="nav-link">Appointments</a>
                     <a href="patients.php" class="nav-link">Patients</a>
                     <a href="reports.php" class="nav-link">Reports</a>
-                    <a href="chat.php" class="nav-link">Messages</a>
+                    <a href="../chat.php" class="nav-link">Messages</a>
                 <?php elseif ($role === 'patient'): ?>
                     <a href="dashboard.php" class="nav-link">Dashboard</a>
                     <a href="appointments.php" class="nav-link">Appointments</a>
                     <a href="reports.php" class="nav-link">Reports</a>
                     <a href="feed.php" class="nav-link">Feed</a>
-                    <a href="chat.php" class="nav-link">Messages</a>
-                    <a href="chatbot.php" class="nav-link">AI Assistant</a>
+                    <a href="../chat.php" class="nav-link">Messages</a>
                 <?php endif; ?>
             </div>
         </div>
