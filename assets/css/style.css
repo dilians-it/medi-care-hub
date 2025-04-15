@@ -81,3 +81,19 @@
 .grid-list {
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
 }
+
+.bg-doctor {
+    background-color: #4F46E5;
+}
+
+.bg-patient {
+    background-color: #10B981;
+}
+
+.bg-hospital {
+    background-color: #F59E0B;
+}
+
+.bg-admin {
+    background-color: #EF4444;
+}
