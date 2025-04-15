@@ -32,8 +32,10 @@ $role = $_SESSION['role'];
                         <div class="p-4 max-h-96 overflow-y-auto" id="notificationList"></div>
                     </div>
                 </div>
-                <span><?php echo ucfirst($role); ?></span>
-                <a href="<?php echo dirname($_SERVER['PHP_SELF'], 2); ?>/auth/logout.php" class="hover:text-gray-200">Logout</a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <span class="text-gray-600"><?php echo ucfirst($_SESSION['role']); ?></span>
+                    <a href="/medi-care-hub/auth/logout.php" class="nav-link">Logout</a>
+                </div>
             </div>
         </div>
     </nav>
